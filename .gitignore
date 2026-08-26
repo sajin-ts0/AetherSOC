@@ -1,0 +1,33 @@
+# Environment and secrets
+.env
+*.pem
+*.key
+*.crt
+
+# Wazuh related (when cloned inside or nearby)
+wazuh-docker/
+single-node/
+
+# Logs and data
+suricata/logs/*
+!suricata/logs/.gitkeep
+*.log
+*.eve.json
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Temporary campaign state
+campaigns/state/
+*.pid

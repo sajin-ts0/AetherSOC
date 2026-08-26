@@ -1,0 +1,54 @@
+# AetherSOC - Additional services for the lightweight SOC lab
+# Core SIEM (Wazuh) is deployed from the official wazuh-docker single-node
+# This file adds vulnerable targets + Suricata + campaign support
+
+services:
+
+  # Damn Vulnerable Web Application
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: aether-dvwa
+    ports:
+      - "8080:80"
+    networks:
+      - aether-net
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 0.5
+
+  # OWASP Juice Shop - modern vulnerable app
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: aether-juice
+    ports:
+      - "3000:3000"
+    networks:
+      - aether-net
+    restart: unless-stopped
+    mem_limit: 768m
+    cpus: 0.7
+
+  # Suricata IDS (lightweight monitoring)
+  # Note: For best results on low-end hosts, you may need to adjust the interface
+  # or run Suricata in a more restricted mode. See docs/troubleshooting.md
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: aether-suricata
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    volumes:
+      - ./suricata/logs:/var/log/suricata
+      - ./suricata/etc:/etc/suricata
+    command: -i eth0
+    restart: unless-stopped
+    mem_limit: 1g
+    # If eth0 does not exist on your host, change the interface name
+    # or comment out this service and run Suricata manually later.
+
+networks:
+  aether-net:
+    driver: bridge
+    name: aether-net
